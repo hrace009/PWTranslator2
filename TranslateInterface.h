@@ -10,6 +10,7 @@
 #include <unordered_map>
 #include <windows.h>
 #include <msclr/marshal_cppstd.h>
+#include <algorithm>
 
 using namespace std;
 
@@ -26,19 +27,28 @@ private:
         wstring secondString;
     };
     vector<wstring> chinesLines;
+    vector<wstring> chinesLinesSTF;
     vector<wstring> russianLines;
+    vector<wstring> russianLinesSTF;
     vector<wstring> outputLines;
+    vector<wstring> outputLinesSTF;
     unordered_map<wstring, currentData> russianDatas;
+    unordered_map<wstring, wstring> russianDatasSTF;
+    unordered_map<wstring, wstring> chineDatasSTF;
     wstring_convert<codecvt_utf8<wchar_t>, wchar_t> convert;
     int globalIndex;
     vector<wstring> files;
+    vector<wstring> filesSTF;
     wstring path1;
     wstring path2;
     wstring out;
 
     void initFiles(wstring firstPath, wstring dir);
+    void initSTF(wstring firstPath);
     void initFolders(wstring path2);
     void clear();
+    void clearSTF();
+
 public:
 
     TranslateInterface(System::String^ firstPath, System::String^ secondPath, System::String^ outputPath);
@@ -54,6 +64,17 @@ public:
     void toOutput(wstring currentLine);
     void translateFile(wstring fileName);
     vector<wstring> getAllFiles();
+    vector<wstring> getAllFilesSTF();
+
+    bool isQuote(int index, wstring currentLine);
+    bool isNotNumber(int index, wstring currentLine);
+    bool isNewLine(int index, wstring currentLine);
+    bool isComment(int index, wstring currentLine);
+    wstring toNormalID(wstring id);
+    void initRussianDataSTF();
+    void initChineDataSTF();
+    void toOutputSTF();
+    void translateFileSTF(wstring fileName);
 };
 
 #endif

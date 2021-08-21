@@ -33,6 +33,23 @@ void TranslateInterface::initFiles(wstring firstPath, wstring dir)
     }
 }
 
+void TranslateInterface::initSTF(wstring firstPath)
+{
+    WIN32_FIND_DATAW wfd;
+    wstring path = firstPath + L"\\*.stf";
+    HANDLE const hFind = FindFirstFileW(path.c_str(), &wfd);
+
+    if (INVALID_HANDLE_VALUE != hFind)
+    {
+        do
+        {
+            filesSTF.push_back(&wfd.cFileName[0]);
+        } while (NULL != FindNextFileW(hFind, &wfd));
+
+        FindClose(hFind);
+    }
+}
+
 void TranslateInterface::initFolders(wstring path2)
 {
     wstring ani = path2 + L"\\ani";
@@ -69,6 +86,15 @@ void TranslateInterface::clear()
     outputLines.clear();
 }
 
+void TranslateInterface::clearSTF()
+{
+    chinesLinesSTF.clear();
+    chineDatasSTF.clear();
+    russianLinesSTF.clear();
+    russianDatasSTF.clear();
+    outputLinesSTF.clear();
+}
+
 TranslateInterface::TranslateInterface(System::String^ firstPath, System::String^ secondPath, System::String^ outputPath)
 {
     msclr::interop::marshal_context context;
@@ -76,7 +102,8 @@ TranslateInterface::TranslateInterface(System::String^ firstPath, System::String
     path2 = context.marshal_as<wstring>(secondPath);
     out = context.marshal_as<wstring>(outputPath);
     this->initFiles(path1, L"");
-    this->initFolders(path2);
+    this->initFolders(out);
+    this->initSTF(path1);
 }
 
 TranslateInterface::~TranslateInterface()
@@ -291,6 +318,7 @@ void TranslateInterface::toOutput(wstring currentLine)
     {
         if (isName(index, currentLine))
         {
+            currentName = L"";
             wstring name = convert.from_bytes(" Name=\"");
             outputLine += name;
             int closeIndex = index + 7;
@@ -358,7 +386,7 @@ void TranslateInterface::toOutput(wstring currentLine)
 
     outputLines.push_back(outputLine);
     outputLine.clear();
-    if (russianLine.nextString.size() > 0)
+    if (russianLine.nextString.size() > 0 && globalIndex < chinesLines.size() - 1)
     {
         globalIndex++;
         currentLine = chinesLines[globalIndex];
@@ -381,7 +409,7 @@ void TranslateInterface::toOutput(wstring currentLine)
         outputLines.push_back(outputLine);
     }
     outputLine.clear();
-    if (russianLine.secondString.size() > 0)
+    if (russianLine.secondString.size() > 0 && globalIndex < chinesLines.size() - 1)
     {
         globalIndex++;
         currentLine = chinesLines[globalIndex];
@@ -409,6 +437,157 @@ void TranslateInterface::toOutput(wstring currentLine)
 vector<wstring> TranslateInterface::getAllFiles()
 {
     return files;
+}
+
+vector<wstring> TranslateInterface::getAllFilesSTF()
+{
+    return filesSTF;
+}
+
+bool TranslateInterface::isQuote(int index, wstring currentLine)
+{
+    wstring cur = currentLine.substr(index, 1);
+    wstring quote = L"\"";
+
+    return cur == quote;
+}
+
+bool TranslateInterface::isNotNumber(int index, wstring currentLine)
+{
+    wstring cur = currentLine.substr(index, 1);
+    return cur == L"0" || cur == L"1" ||
+        cur == L"2" || cur == L"3" ||
+        cur == L"4" || cur == L"5" ||
+        cur == L"6" || cur == L"7" ||
+        cur == L"8" || cur == L"9";
+}
+
+bool TranslateInterface::isNewLine(int index, wstring currentLine)
+{
+    wstring cur = currentLine.substr(index, 1);
+    wstring newLine = L"\r";
+    return cur == newLine;
+}
+
+bool TranslateInterface::isComment(int index, wstring currentLine)
+{
+    wstring cur = currentLine.substr(index, 2);
+    wstring newLine = L"//";
+    return cur == newLine;
+}
+
+wstring TranslateInterface::toNormalID(wstring id)
+{
+    wstring newID;
+    for (int i = 0; i < id.size(); i++)
+    {
+        if (!isNotNumber(i, id))
+        {
+            return newID;
+        }
+        newID += id[i];
+    }
+
+    return newID;
+}
+
+void TranslateInterface::initRussianDataSTF()
+{
+    for (int i = 0; i < russianLinesSTF.size(); i++)
+    {
+        wstring currentLine = russianLinesSTF[i];
+        wstring id;
+        for (int j = 0; j < currentLine.size(); j++)
+        {
+            if (isComment(j, currentLine))
+            {
+                break;
+            }
+            if (isQuote(j, currentLine))
+            {
+                id = toNormalID(id);
+                wstring currentString;
+                currentString += currentLine[j++];
+                while (!isQuote(j, currentLine))
+                {
+                    if (j == currentLine.size())
+                    {
+                        j = 0;
+                        i++;
+                        if (i < russianLinesSTF.size())
+                        {
+                            currentLine = russianLinesSTF[i];
+                        }
+                        else
+                        {
+                            return;
+                        }
+                    }
+                    else
+                    {
+                        currentString += currentLine[j++];
+                    }
+                }
+                currentString += currentLine[j++];
+                russianDatasSTF[id] = currentString;
+            }
+            else
+            {
+                id += currentLine[j];
+            }
+        }
+    }
+}
+
+void TranslateInterface::initChineDataSTF()
+{
+    for (int i = 0; i < chinesLinesSTF.size(); i++)
+    {
+        wstring currentLine = chinesLinesSTF[i];
+        wstring id;
+        for (int j = 0; j < currentLine.size(); j++)
+        {
+            if (isComment(j, currentLine))
+            {
+                break;
+            }
+            if (isQuote(j, currentLine))
+            {
+                id = toNormalID(id);
+                wstring currentString;
+                currentString += currentLine[j++];
+                while (!isQuote(j, currentLine))
+                {
+                    if (j == currentLine.size())
+                    {
+                        j = 0;
+                        i++;
+                        if (i < chinesLinesSTF.size())
+                        {
+                            currentLine = chinesLinesSTF[i];
+                        }
+                        else
+                        {
+                            return;
+                        }
+                    }
+                    else
+                    {
+                        currentString += currentLine[j++];
+                    }
+                }
+                currentString += currentLine[j++];
+                if (chineDatasSTF.find(id) == chineDatasSTF.end())
+                {
+                    chineDatasSTF[id] = currentString;
+                }
+            }
+            else
+            {
+                id += currentLine[j];
+            }
+        }
+    }
 }
 
 void TranslateInterface::translateFile(wstring fileName)
@@ -443,10 +622,76 @@ void TranslateInterface::translateFile(wstring fileName)
     }
 
     ofstream fout(out + L"\\" + fileName, ios::out | ios::binary);
-    fout.imbue(locale(file.getloc(), new codecvt_utf16<wchar_t, 0x10ffff, consume_header>));
+    wstring_convert<codecvt_utf16<
+        wchar_t, 0x10ffff, codecvt_mode(generate_header | little_endian)>> conv;
     for (const auto currentLine : outputLines)
     {
-        fout << convert.to_bytes(currentLine);
+        fout << conv.to_bytes(currentLine);
+    }
+    fout.close();
+}
+
+void TranslateInterface::toOutputSTF()
+{
+    vector<pair<int, wstring>> toOut;
+
+    for (const auto iter : chineDatasSTF)
+    {
+        int id = stoi(iter.first);
+        if (russianDatasSTF.find(iter.first) != russianDatasSTF.end())
+        {
+            toOut.push_back({ id, russianDatasSTF[iter.first] });
+        }
+        else
+        {
+            toOut.push_back({ id, iter.second });
+        }
+    }
+
+    sort(toOut.begin(), toOut.end());
+
+    for (int i = 0; i < toOut.size(); i++)
+    {
+        outputLinesSTF.push_back(to_wstring(toOut[i].first) + L" " + toOut[i].second + L"\r");
+    }
+}
+
+
+void TranslateInterface::translateFileSTF(wstring fileName)
+{
+    clearSTF();
+    wifstream file(path1 + L"\\" + fileName, ios::in | ios::binary);
+    file.imbue(locale(file.getloc(), new codecvt_utf16<wchar_t, 0xffff, consume_header>));
+
+    wstring line;
+
+    while (getline(file, line))
+    {
+        chinesLinesSTF.push_back(line);
+    }
+    file.close();
+
+    file.open(path2 + L"\\" + fileName, ios::in | ios::binary);
+    file.imbue(locale(file.getloc(), new codecvt_utf16<wchar_t, 0xffff, consume_header>));
+
+    while (getline(file, line))
+    {
+        russianLinesSTF.push_back(line);
+    }
+    file.close();
+
+    initRussianDataSTF();
+    initChineDataSTF();
+    toOutputSTF();
+
+    ofstream fout(out + L"\\" + fileName, ios::out | ios::binary);
+    fout.imbue(locale(file.getloc(), new codecvt_utf16<wchar_t, 0x10ffff, consume_header>));
+
+    wstring_convert<codecvt_utf16<
+        wchar_t, 0x10ffff, codecvt_mode(generate_header | little_endian)>> conv;
+    for (const auto currentLine : outputLinesSTF)
+    {
+        fout << conv.to_bytes(currentLine);
     }
     fout.close();
 }

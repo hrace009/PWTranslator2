@@ -1,6 +1,7 @@
 #pragma once
 
 #include "TranslateInterface.h"
+#include <thread>
 
 namespace PWTranslator {
 
@@ -378,19 +379,36 @@ namespace PWTranslator {
 	private: System::Void button7_Click(System::Object^ sender, System::EventArgs^ e) {
 		this->translator = new TranslateInterface(this->textBox1->Text, this->textBox2->Text, this->textBox5->Text);
 		vector<wstring> files = this->translator->getAllFiles();
-		wstring progress = L"Progress: 0/" + to_wstring(files.size());
+		wstring progress = L"Translated XML files. Progress: 0/" + to_wstring(files.size());
 		this->label7->Text = gcnew String(progress.c_str());
 		this->progressBar1->Maximum = files.size();
-		for (int index = 0; index < files.size(); index++)
+		/*for (int index = 0; index < files.size(); index++)
 		{
 			this->translator->translateFile(files[index]);
-			progress = L"Progress: " + to_wstring(index) + L"/" + to_wstring(files.size());
+			progress = L"Translated XML files. Progress: " + to_wstring(index) + L"/" + to_wstring(files.size());
 			this->label7->Text = gcnew String(progress.c_str());
 			this->label7->Update();
 			this->progressBar1->Increment(1);
 		}
-		progress = L"Progress: " + to_wstring(files.size()) + L"/" + to_wstring(files.size()) + L"  Completed!";
+		progress = L"Translated XML files. Progress: " + to_wstring(files.size()) + L"/" + to_wstring(files.size()) + L"  Completed!";
 		this->label7->Text = gcnew String(progress.c_str()); 
+		this->progressBar1->Increment(1);*/
+
+		this->progressBar1->Value = 0;
+		files = this->translator->getAllFilesSTF();
+		progress = L"Translated STF files. Progress: 0/" + to_wstring(files.size());
+		this->label7->Text = gcnew String(progress.c_str());
+		this->progressBar1->Maximum = files.size();
+		for (int index = 0; index < files.size(); index++)
+		{
+			this->translator->translateFileSTF(files[index]);
+			progress = L"Translated STF files. Progress: " + to_wstring(index) + L"/" + to_wstring(files.size());
+			this->label7->Text = gcnew String(progress.c_str());
+			this->label7->Update();
+			this->progressBar1->Increment(1);
+		}
+		progress = L"Translated STF files. Progress: " + to_wstring(files.size()) + L"/" + to_wstring(files.size()) + L"  Completed!";
+		this->label7->Text = gcnew String(progress.c_str());
 		this->progressBar1->Increment(1);
 	}
 	};
