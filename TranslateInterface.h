@@ -14,36 +14,30 @@
 
 using namespace std;
 
+const wstring OPENBRACKET[] = { L"<IMAGEPICTURE", L"<EDIT", L"<LABEL", L"<STILLIMAGEBUTTON", L"<LIST", L"<RADIO", L"<CHECK", L"<TEXT" };
+const wstring CLOSEBRACKET[] = { L"</IMAGEPICTURE>", L"</EDIT>", L"</LABEL>", L"</STILLIMAGEBUTTON>", L"</LIST>", L"</RADIO>", L"</CHECK>" , L"</TEXT>" };
+
 class TranslateInterface
 {
-private:
-    struct currentData
-    {
-        wstring x;
-        wstring y;
-        wstring width;
-        wstring height;
-        wstring nextString;
-        wstring secondString;
-    };
 
+private:
     struct STFData
     {
         wstring space;
         wstring str;
     };
 
-    vector<wstring> chinesLines;
+    vector<wstring> chinesLinesXML;
+    vector<wstring> russianLinesXML;
+    vector<wstring> outputLinesXML;
+    unordered_map<wstring, wstring> russianDataXML;
+
     vector<wstring> chinesLinesSTF;
-    vector<wstring> russianLines;
     vector<wstring> russianLinesSTF;
-    vector<wstring> outputLines;
     vector<wstring> outputLinesSTF;
-    unordered_map<wstring, currentData> russianDatas;
     unordered_map<wstring, wstring> russianDatasSTF;
     unordered_map<wstring, STFData> chineDatasSTF;
     wstring_convert<codecvt_utf8<wchar_t>, wchar_t> convert;
-    int globalIndex;
     vector<wstring> files;
     vector<wstring> filesSTF;
     wstring path1;
@@ -60,15 +54,15 @@ public:
 
     TranslateInterface(System::String^ firstPath, System::String^ secondPath, System::String^ outputPath);
     virtual ~TranslateInterface();
-    bool isName(int index, wstring currentLine);
-    bool isX(int index, wstring currentLine);
-    bool isY(int index, wstring currentLine);
-    bool isWidth(int index, wstring currentLine);
-    bool isHeight(int index, wstring currentLine);
-    bool isString(int index, wstring currentLine);
-    bool isNextString(wstring currentLine);
-    void initRussianData();
-    void toOutput(wstring currentLine);
+  
+    bool isName(int index, wstring line);
+    int isOpenBracket(int index, wstring line);
+    bool isCloseBracket(int index, wstring line, int numberOpen);
+    int findCloseQuote(int index, wstring line);
+    bool endLine(int start, int numLine, int index, wstring line);
+    void initRussianDataXML();
+    void toNormalChine();
+    void toOutput();
     void translateFile(wstring fileName);
     vector<wstring> getAllFiles();
     vector<wstring> getAllFilesSTF();

@@ -80,10 +80,10 @@ void TranslateInterface::initFolders(wstring path2)
 
 void TranslateInterface::clear()
 {
-    chinesLines.clear();
-    russianLines.clear();
-    russianDatas.clear();
-    outputLines.clear();
+    chinesLinesXML.clear();
+    russianLinesXML.clear();
+outputLinesXML.clear();
+russianDataXML.clear();
 }
 
 void TranslateInterface::clearSTF()
@@ -110,329 +110,6 @@ TranslateInterface::~TranslateInterface()
 {
 }
 
-bool TranslateInterface::isName(int index, wstring currentLine)
-{
-    if (index + 6 > currentLine.size())
-    {
-        return false;
-    }
-
-    wstring cur = currentLine.substr(index, 6);
-    wstring name = convert.from_bytes(" Name=");
-    return cur == name;
-}
-
-bool TranslateInterface::isX(int index, wstring currentLine)
-{
-    if (index + 3 > currentLine.size())
-    {
-        return false;
-    }
-
-    wstring cur = currentLine.substr(index, 3);
-    wstring x = convert.from_bytes(" x=");
-    return cur == x;
-}
-
-bool TranslateInterface::isY(int index, wstring currentLine)
-{
-    if (index + 3 > currentLine.size())
-    {
-        return false;
-    }
-
-    wstring cur = currentLine.substr(index, 3);
-    wstring y = convert.from_bytes(" y=");
-    return cur == y;
-}
-
-bool TranslateInterface::isWidth(int index, wstring currentLine)
-{
-    if (index + 7 > currentLine.size())
-    {
-        return false;
-    }
-
-    wstring cur = currentLine.substr(index, 7);
-    wstring wigth = convert.from_bytes(" Width=");
-    return cur == wigth;
-}
-
-bool TranslateInterface::isHeight(int index, wstring currentLine)
-{
-    if (index + 8 > currentLine.size())
-    {
-        return false;
-    }
-
-    wstring cur = currentLine.substr(index, 8);
-    wstring height = convert.from_bytes(" Height=");
-    return cur == height;
-}
-
-bool TranslateInterface::isString(int index, wstring currentLine)
-{
-    if (index + 8 > currentLine.size())
-    {
-        return false;
-    }
-
-    wstring cur = currentLine.substr(index, 8);
-    wstring str = convert.from_bytes(" String=");
-    return cur == str;
-}
-
-bool TranslateInterface::isNextString(wstring currentLine)
-{
-    for (int index = 0; index < currentLine.size(); index++)
-    {
-        if (isString(index, currentLine))
-        {
-            return true;
-        }
-    }
-
-    return false;
-}
-
-void TranslateInterface::initRussianData()
-{
-    for (int lineIndex = 0; lineIndex < russianLines.size(); lineIndex++)
-    {
-        currentData data;
-        wstring currentLine = russianLines[lineIndex];
-        wstring currentName;
-        for (int index = 0; index < currentLine.size(); index++)
-        {
-            wstring currentValue;
-            if (isName(index, currentLine))
-            {
-                int closeIndex = index + 7;
-                while (currentLine[closeIndex] != '\"')
-                {
-                    currentName += currentLine[closeIndex++];
-                }
-                index = closeIndex;
-                russianDatas.insert({ currentName, data });
-            }
-            if (russianDatas.find(currentName) != russianDatas.end())
-            {
-                if (isX(index, currentLine))
-                {
-                    int closeIndex = index + 4;
-                    while (currentLine[closeIndex] != '\"')
-                    {
-                        currentValue += currentLine[closeIndex++];
-                    }
-                    index = closeIndex;
-                    data.x = currentValue;
-                }
-                else if (isY(index, currentLine))
-                {
-                    int closeIndex = index + 4;
-                    while (currentLine[closeIndex] != '\"')
-                    {
-                        currentValue += currentLine[closeIndex++];
-                    }
-                    index = closeIndex;
-                    data.y = currentValue;
-                }
-                else if (isWidth(index, currentLine))
-                {
-                    int closeIndex = index + 8;
-                    while (currentLine[closeIndex] != '\"')
-                    {
-                        currentValue += currentLine[closeIndex++];
-                    }
-                    index = closeIndex;
-                    data.width = currentValue;
-                }
-                else if (isHeight(index, currentLine))
-                {
-                    int closeIndex = index + 9;
-                    while (currentLine[closeIndex] != '\"')
-                    {
-                        currentValue += currentLine[closeIndex++];
-                    }
-                    index = closeIndex;
-                    data.height = currentValue;
-                }
-            }
-        }
-        wstring nextLine;
-        if (lineIndex + 1 < russianLines.size())
-        {
-            nextLine = russianLines[lineIndex + 1];
-            if (isNextString(nextLine))
-            {
-                wstring currentValue;
-                for (int index = 0; index < nextLine.size(); index++)
-                {
-                    if (isString(index, nextLine))
-                    {
-                        int closeIndex = index + 9;
-                        while (nextLine[closeIndex] != '\"')
-                        {
-                            currentValue += nextLine[closeIndex++];
-                        }
-                        index = closeIndex;
-                        data.nextString = currentValue;
-                        break;
-                    }
-                }
-            }
-        }
-        if (lineIndex + 2 < russianLines.size())
-        {
-            nextLine = russianLines[lineIndex + 2];
-            if (isNextString(nextLine))
-            {
-                wstring currentValue;
-                for (int index = 0; index < nextLine.size(); index++)
-                {
-                    if (isString(index, nextLine))
-                    {
-                        int closeIndex = index + 9;
-                        while (nextLine[closeIndex] != '\"')
-                        {
-                            currentValue += nextLine[closeIndex++];
-                        }
-                        index = closeIndex;
-                        data.secondString = currentValue;
-                        break;
-                    }
-                }
-            }
-        }
-        russianDatas[currentName] = data;
-    }
-}
-
-void TranslateInterface::toOutput(wstring currentLine)
-{
-    currentData russianLine;
-    wstring currentName;
-    wstring outputLine;
-
-    for (int index = 0; index < currentLine.size(); index++)
-    {
-        if (isName(index, currentLine))
-        {
-            currentName = L"";
-            wstring name = convert.from_bytes(" Name=\"");
-            outputLine += name;
-            int closeIndex = index + 7;
-            while (currentLine[closeIndex] != '\"')
-            {
-                currentName += currentLine[closeIndex++];
-            }
-            index = closeIndex;
-            if (russianDatas.find(currentName) != russianDatas.end())
-            {
-                russianLine = russianDatas[currentName];
-            }
-            outputLine += currentName;
-        }
-        else if (isX(index, currentLine))
-        {
-            if (russianLine.x.size() > 0)
-            {
-                wstring x = convert.from_bytes(" x=\"");
-                outputLine += x;
-                outputLine += russianLine.x;
-                int closeIndex = index + 4;
-                while (currentLine[closeIndex++] != '\"');
-                index = closeIndex - 1;
-            }
-        }
-        else if (isY(index, currentLine))
-        {
-            if (russianLine.y.size() > 0)
-            {
-                wstring y = convert.from_bytes(" y=\"");
-                outputLine += y;
-                outputLine += russianLine.y;
-                int closeIndex = index + 4;
-                while (currentLine[closeIndex++] != '\"');
-                index = closeIndex - 1;
-            }
-        }
-        else if (isWidth(index, currentLine))
-        {
-            if (russianLine.width.size() > 0)
-            {
-                wstring width = convert.from_bytes(" Width=\"");
-                outputLine += width;
-                outputLine += russianLine.width;
-                int closeIndex = index + 8;
-                while (currentLine[closeIndex++] != '\"');
-                index = closeIndex - 1;
-            }
-        }
-        else if (isHeight(index, currentLine))
-        {
-            if (russianLine.width.size() > 0)
-            {
-                wstring height = convert.from_bytes(" Height=\"");
-                outputLine += height;
-                outputLine += russianLine.height;
-                int closeIndex = index + 9;
-                while (currentLine[closeIndex++] != '\"');
-                index = closeIndex - 1;
-            }
-        }
-        outputLine += currentLine[index];
-    }
-
-    outputLines.push_back(outputLine);
-    outputLine.clear();
-    if (russianLine.nextString.size() > 0 && globalIndex < chinesLines.size() - 1)
-    {
-        globalIndex++;
-        currentLine = chinesLines[globalIndex];
-        for (int index = 0; index < currentLine.size(); index++)
-        {
-            if (isString(index, currentLine))
-            {
-                if (russianLine.width.size() > 0)
-                {
-                    wstring height = convert.from_bytes(" String=\"");
-                    outputLine += height;
-                    outputLine += russianLine.nextString;
-                    int closeIndex = index + 9;
-                    while (currentLine[closeIndex++] != '\"');
-                    index = closeIndex - 1;
-                }
-            }
-            outputLine += currentLine[index];
-        }
-        outputLines.push_back(outputLine);
-    }
-    outputLine.clear();
-    if (russianLine.secondString.size() > 0 && globalIndex < chinesLines.size() - 1)
-    {
-        globalIndex++;
-        currentLine = chinesLines[globalIndex];
-        for (int index = 0; index < currentLine.size(); index++)
-        {
-            if (isString(index, currentLine))
-            {
-                if (russianLine.width.size() > 0)
-                {
-                    wstring height = convert.from_bytes(" String=\"");
-                    outputLine += height;
-                    outputLine += russianLine.secondString;
-                    int closeIndex = index + 9;
-                    while (currentLine[closeIndex++] != '\"');
-                    index = closeIndex - 1;
-                }
-            }
-            outputLine += currentLine[index];
-        }
-        outputLines.push_back(outputLine);
-    }
-    return;
-}
 
 vector<wstring> TranslateInterface::getAllFiles()
 {
@@ -442,6 +119,221 @@ vector<wstring> TranslateInterface::getAllFiles()
 vector<wstring> TranslateInterface::getAllFilesSTF()
 {
     return filesSTF;
+}
+
+bool TranslateInterface::isName(int index, wstring line)
+{
+    if (index + 6 >= line.size())
+    {
+        return false;
+    }
+
+    wstring name = L" Name=";
+    wstring cur = line.substr(index, 6);
+
+    return name == cur;
+}
+
+int TranslateInterface::isOpenBracket(int index, wstring line)
+{
+    for (int i = 0; i < 8; i++)
+    {
+        wstring currentOpen = OPENBRACKET[i];
+
+        if (index + currentOpen.size() < line.size())
+        {
+            wstring cur = line.substr(index, currentOpen.size());
+            if (cur == currentOpen)
+            {
+                return i;
+            }
+        }
+    }
+
+    return -1;
+}
+
+bool TranslateInterface::isCloseBracket(int index, wstring line, int numberOpen)
+{
+    wstring currentClose = CLOSEBRACKET[numberOpen];
+
+    if (index + currentClose.size() >= line.size())
+    {
+        return false;
+    }
+
+    wstring cur = line.substr(index, currentClose.size());
+
+    return currentClose == cur;
+}
+
+int TranslateInterface::findCloseQuote(int index, wstring line)
+{
+    for (; index < line.size(); index++)
+    {
+        if (line[index] == '\"')
+        {
+            return index;
+        }
+    }
+
+    return -1;
+}
+
+bool TranslateInterface::endLine(int start, int numLine, int index, wstring line)
+{
+    if (start != numLine)
+    {
+        return false;
+    }
+
+    if (index + 2 >= line.size())
+    {
+        return false;
+    }
+
+    wstring cur = line.substr(index, 2);
+    wstring str = L"/>";
+
+    return str == cur;
+}
+
+void TranslateInterface::initRussianDataXML()
+{
+    for (int index = 0; index < russianLinesXML.size(); index++)
+    {
+        wstring currentName;
+        wstring currentLine = russianLinesXML[index];
+        wstring dataLine;
+        int startIndex = index;
+        for (int j = 0; j < currentLine.size(); j++)
+        {
+            int numberOpenBracket = isOpenBracket(j, currentLine);
+            dataLine += currentLine[j];
+            if (numberOpenBracket != -1)
+            {
+                j++;
+                while (!isCloseBracket(j, currentLine, numberOpenBracket) && !endLine(startIndex, index, j, currentLine))
+                {
+                    if (isName(j, currentLine))
+                    {
+                        int closeQuote = findCloseQuote(j + 7, currentLine);
+                        currentName = currentLine.substr(j + 7, closeQuote - (j + 7));
+                    }
+                    dataLine += currentLine[j];
+                    j++;
+                    if (j == currentLine.size())
+                    {
+                        j = 0;
+                        index++;
+                        if (index >= russianLinesXML.size())
+                        {
+                            break;
+                        }
+                        currentLine = russianLinesXML[index];
+                    }
+                }
+                if (isCloseBracket(j, currentLine, numberOpenBracket))
+                {
+                    dataLine += CLOSEBRACKET[numberOpenBracket];
+                    dataLine += '\r';
+                }
+                else if (endLine(startIndex, index, j, currentLine))
+                {
+                    dataLine += L"/>\r";
+                }
+                russianDataXML[currentName] = dataLine;
+            }
+        }
+    }
+}
+
+void TranslateInterface::toNormalChine()
+{
+    vector<wstring> temp;
+    for (int i = 0; i < chinesLinesXML.size(); i++)
+    {
+        wstring currentLine = chinesLinesXML[i];
+        wstring newLine;
+        for (int j = 0; j < currentLine.size(); j++)
+        {
+            newLine += currentLine[j];
+            if (currentLine[j] == '\r')
+            {
+                temp.push_back(newLine);
+                newLine = L"";
+            }
+        }
+    }
+
+    chinesLinesXML = temp;
+}
+
+void TranslateInterface::toOutput()
+{
+    for (int index = 0; index < chinesLinesXML.size(); index++)
+    {
+        wstring currentName;
+        wstring currentLine = chinesLinesXML[index];
+        wstring dataLine;
+        int startIndex = index;
+        bool flag = false;
+        for (int j = 0; j < currentLine.size(); j++)
+        {
+            int numberOpenBracket = isOpenBracket(j, currentLine);
+            dataLine += currentLine[j];
+            if (numberOpenBracket != -1)
+            {
+                j++;
+                while (!isCloseBracket(j, currentLine, numberOpenBracket) && !endLine(startIndex, index, j, currentLine))
+                {
+                    if (isName(j, currentLine))
+                    {
+                        int closeQuote = findCloseQuote(j + 7, currentLine);
+                        currentName = currentLine.substr(j + 7, closeQuote - (j + 7));
+                        if (russianDataXML.find(currentName) != russianDataXML.end())
+                        {
+                            dataLine = russianDataXML[currentName];
+                            flag = true;
+                        }
+                    }
+                    if (!flag)
+                    {
+                        dataLine += currentLine[j];
+                    }
+                    j++;
+                    if (j == currentLine.size())
+                    {
+                        j = 0;
+                        index++;
+                        if (index >= chinesLinesXML.size())
+                        {
+                            break;
+                        }
+                        currentLine = chinesLinesXML[index];
+                    }
+                }
+                if (!flag)
+                {
+                    if (isCloseBracket(j, currentLine, numberOpenBracket))
+                    {
+                        dataLine += CLOSEBRACKET[numberOpenBracket];
+                        dataLine += '\r';
+                    }
+                    else if (endLine(startIndex, index, j, currentLine))
+                    {
+                        dataLine += L"/>\r";
+                    }
+                    flag = true;
+                }
+                outputLinesXML.push_back(dataLine);
+            }
+        }
+        if (!flag)
+        {
+            outputLinesXML.push_back(currentLine);
+        }
+    }
 }
 
 bool TranslateInterface::isQuote(int index, wstring currentLine)
@@ -606,7 +498,7 @@ void TranslateInterface::translateFile(wstring fileName)
 
     while (getline(file, line))
     {
-        chinesLines.push_back(line);
+        chinesLinesXML.push_back(line);
     }
     file.close();
 
@@ -615,22 +507,18 @@ void TranslateInterface::translateFile(wstring fileName)
 
     while (getline(file, line))
     {
-        russianLines.push_back(line);
+        russianLinesXML.push_back(line);
     }
     file.close();
 
-    initRussianData();
-
-    for (globalIndex = 0; globalIndex < chinesLines.size(); globalIndex++)
-    {
-        wstring currentLine = chinesLines[globalIndex];
-        toOutput(currentLine);
-    }
+    initRussianDataXML();
+    toNormalChine();
+    toOutput();
 
     ofstream fout(out + L"\\" + fileName, ios::out | ios::binary);
     wstring_convert<codecvt_utf16<
         wchar_t, 0x10ffff, codecvt_mode(generate_header | little_endian)>> conv;
-    for (const auto currentLine : outputLines)
+    for (const auto currentLine : outputLinesXML)
     {
         fout << conv.to_bytes(currentLine);
     }
@@ -661,7 +549,6 @@ void TranslateInterface::toOutputSTF()
         outputLinesSTF.push_back(to_wstring(toOut[i].first) + toOut[i].second.second + toOut[i].second.first + L"\r");
     }
 }
-
 
 void TranslateInterface::translateFileSTF(wstring fileName)
 {

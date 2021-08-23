@@ -382,7 +382,7 @@ namespace PWTranslator {
 		wstring progress = L"Translated XML files. Progress: 0/" + to_wstring(files.size());
 		this->label7->Text = gcnew String(progress.c_str());
 		this->progressBar1->Maximum = files.size();
-		/*for (int index = 0; index < files.size(); index++)
+		for (int index = 0; index < files.size(); index++)
 		{
 			this->translator->translateFile(files[index]);
 			progress = L"Translated XML files. Progress: " + to_wstring(index) + L"/" + to_wstring(files.size());
@@ -392,7 +392,7 @@ namespace PWTranslator {
 		}
 		progress = L"Translated XML files. Progress: " + to_wstring(files.size()) + L"/" + to_wstring(files.size()) + L"  Completed!";
 		this->label7->Text = gcnew String(progress.c_str()); 
-		this->progressBar1->Increment(1);*/
+		this->progressBar1->Increment(1);
 
 		this->progressBar1->Value = 0;
 		files = this->translator->getAllFilesSTF();
