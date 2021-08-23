@@ -26,6 +26,13 @@ private:
         wstring nextString;
         wstring secondString;
     };
+
+    struct STFData
+    {
+        wstring space;
+        wstring str;
+    };
+
     vector<wstring> chinesLines;
     vector<wstring> chinesLinesSTF;
     vector<wstring> russianLines;
@@ -34,7 +41,7 @@ private:
     vector<wstring> outputLinesSTF;
     unordered_map<wstring, currentData> russianDatas;
     unordered_map<wstring, wstring> russianDatasSTF;
-    unordered_map<wstring, wstring> chineDatasSTF;
+    unordered_map<wstring, STFData> chineDatasSTF;
     wstring_convert<codecvt_utf8<wchar_t>, wchar_t> convert;
     int globalIndex;
     vector<wstring> files;

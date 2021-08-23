@@ -545,6 +545,7 @@ void TranslateInterface::initChineDataSTF()
     {
         wstring currentLine = chinesLinesSTF[i];
         wstring id;
+        wstring space;
         for (int j = 0; j < currentLine.size(); j++)
         {
             if (isComment(j, currentLine))
@@ -579,11 +580,16 @@ void TranslateInterface::initChineDataSTF()
                 currentString += currentLine[j++];
                 if (chineDatasSTF.find(id) == chineDatasSTF.end())
                 {
-                    chineDatasSTF[id] = currentString;
+                    chineDatasSTF[id].str = currentString;
+                    chineDatasSTF[id].space = space;
                 }
             }
             else
             {
+                if (currentLine[j] == '\t' || currentLine[j] == ' ')
+                {
+                    space = currentLine[j];
+                }
                 id += currentLine[j];
             }
         }
@@ -633,18 +639,18 @@ void TranslateInterface::translateFile(wstring fileName)
 
 void TranslateInterface::toOutputSTF()
 {
-    vector<pair<int, wstring>> toOut;
+    vector<pair<int, pair<wstring, wstring>>> toOut;
 
     for (const auto iter : chineDatasSTF)
     {
         int id = stoi(iter.first);
         if (russianDatasSTF.find(iter.first) != russianDatasSTF.end())
         {
-            toOut.push_back({ id, russianDatasSTF[iter.first] });
+            toOut.push_back({ id, {russianDatasSTF[iter.first], iter.second.space } });
         }
         else
         {
-            toOut.push_back({ id, iter.second });
+            toOut.push_back({ id, {iter.second.str, iter.second.space} });
         }
     }
 
@@ -652,7 +658,7 @@ void TranslateInterface::toOutputSTF()
 
     for (int i = 0; i < toOut.size(); i++)
     {
-        outputLinesSTF.push_back(to_wstring(toOut[i].first) + L" " + toOut[i].second + L"\r");
+        outputLinesSTF.push_back(to_wstring(toOut[i].first) + toOut[i].second.second + toOut[i].second.first + L"\r");
     }
 }
 
