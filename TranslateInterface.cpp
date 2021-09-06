@@ -82,8 +82,9 @@ void TranslateInterface::clear()
 {
     chinesLinesXML.clear();
     russianLinesXML.clear();
-outputLinesXML.clear();
-russianDataXML.clear();
+    outputLinesXML.clear();
+    russianDataXML.clear();
+    chinesDataXML.clear();
 }
 
 void TranslateInterface::clearSTF()
@@ -205,6 +206,10 @@ void TranslateInterface::initRussianDataXML()
         wstring currentName;
         wstring currentLine = russianLinesXML[index];
         wstring dataLine;
+        if (index == 0)
+        {
+            firstRussianLine = currentLine;
+        }
         int startIndex = index;
         for (int j = 0; j < currentLine.size(); j++)
         {
@@ -242,7 +247,16 @@ void TranslateInterface::initRussianDataXML()
                 {
                     dataLine += L"/>\r";
                 }
-                russianDataXML[currentName] = dataLine;
+                russianDataXML[currentName].first = dataLine;
+                int cnt = 0;
+                for (int i = 0; i < dataLine.size(); i++)
+                {
+                    if (dataLine[i] == '\r')
+                    {
+                        cnt++;
+                    }
+                }
+                russianDataXML[currentName].second = cnt;
             }
         }
     }
@@ -269,6 +283,64 @@ void TranslateInterface::toNormalChine()
     chinesLinesXML = temp;
 }
 
+void TranslateInterface::initChinesDataXML()
+{
+    for (int index = 0; index < chinesLinesXML.size(); index++)
+    {
+        wstring currentName;
+        wstring currentLine = chinesLinesXML[index];
+        wstring dataLine;
+        int startIndex = index;
+        for (int j = 0; j < currentLine.size(); j++)
+        {
+            int numberOpenBracket = isOpenBracket(j, currentLine);
+            dataLine += currentLine[j];
+            if (numberOpenBracket != -1)
+            {
+                j++;
+                while (!isCloseBracket(j, currentLine, numberOpenBracket) && !endLine(startIndex, index, j, currentLine))
+                {
+                    if (isName(j, currentLine))
+                    {
+                        int closeQuote = findCloseQuote(j + 7, currentLine);
+                        currentName = currentLine.substr(j + 7, closeQuote - (j + 7));
+                    }
+                    dataLine += currentLine[j];
+                    j++;
+                    if (j == currentLine.size())
+                    {
+                        j = 0;
+                        index++;
+                        if (index >= chinesLinesXML.size())
+                        {
+                            break;
+                        }
+                        currentLine = chinesLinesXML[index];
+                    }
+                }
+                if (isCloseBracket(j, currentLine, numberOpenBracket))
+                {
+                    dataLine += CLOSEBRACKET[numberOpenBracket];
+                    dataLine += '\r';
+                }
+                else if (endLine(startIndex, index, j, currentLine))
+                {
+                    dataLine += L"/>\r";
+                }
+                int cnt = 0;
+                for (int i = 0; i < dataLine.size(); i++)
+                {
+                    if (dataLine[i] == '\r')
+                    {
+                        cnt++;
+                    }
+                }
+                chinesDataXML[currentName] = cnt;
+            }
+        }
+    }
+}
+
 void TranslateInterface::toOutput()
 {
     for (int index = 0; index < chinesLinesXML.size(); index++)
@@ -276,6 +348,24 @@ void TranslateInterface::toOutput()
         wstring currentName;
         wstring currentLine = chinesLinesXML[index];
         wstring dataLine;
+       // wstring firstChinesLine;
+        /*if (index == 0)
+        {
+            if (firstRussianLine.size() > 0)
+            {
+                firstChinesLine = firstRussianLine;
+                dataLine = firstChinesLine;
+                index++;
+                if (index < chinesLinesXML.size())
+                {
+                    currentLine = chinesLinesXML[index];
+                }
+                else
+                {
+                    currentLine = L"";
+                }
+            }
+        }*/
         int startIndex = index;
         bool flag = false;
         for (int j = 0; j < currentLine.size(); j++)
@@ -293,8 +383,11 @@ void TranslateInterface::toOutput()
                         currentName = currentLine.substr(j + 7, closeQuote - (j + 7));
                         if (russianDataXML.find(currentName) != russianDataXML.end())
                         {
-                            dataLine = russianDataXML[currentName];
-                            flag = true;
+                            if (russianDataXML[currentName].second == chinesDataXML[currentName])
+                            {
+                                dataLine = russianDataXML[currentName].first;
+                                flag = true;
+                            }
                         }
                     }
                     if (!flag)
@@ -513,11 +606,12 @@ void TranslateInterface::translateFile(wstring fileName)
 
     initRussianDataXML();
     toNormalChine();
+    initChinesDataXML();
     toOutput();
 
-    ofstream fout(out + L"\\" + fileName, ios::out | ios::binary);
     wstring_convert<codecvt_utf16<
         wchar_t, 0x10ffff, codecvt_mode(generate_header | little_endian)>> conv;
+    ofstream fout(out + L"\\" + fileName, ios::out | ios::binary);
     for (const auto currentLine : outputLinesXML)
     {
         fout << conv.to_bytes(currentLine);

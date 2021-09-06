@@ -384,6 +384,7 @@ namespace PWTranslator {
 		this->progressBar1->Maximum = files.size();
 		for (int index = 0; index < files.size(); index++)
 		{
+			//progress = files[index];
 			this->translator->translateFile(files[index]);
 			progress = L"Translated XML files. Progress: " + to_wstring(index) + L"/" + to_wstring(files.size());
 			this->label7->Text = gcnew String(progress.c_str());

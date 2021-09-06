@@ -30,7 +30,9 @@ private:
     vector<wstring> chinesLinesXML;
     vector<wstring> russianLinesXML;
     vector<wstring> outputLinesXML;
-    unordered_map<wstring, wstring> russianDataXML;
+    wstring firstRussianLine;
+    unordered_map<wstring, pair<wstring, int>> russianDataXML;
+    unordered_map<wstring, int> chinesDataXML;
 
     vector<wstring> chinesLinesSTF;
     vector<wstring> russianLinesSTF;
@@ -62,6 +64,7 @@ public:
     bool endLine(int start, int numLine, int index, wstring line);
     void initRussianDataXML();
     void toNormalChine();
+    void initChinesDataXML();
     void toOutput();
     void translateFile(wstring fileName);
     vector<wstring> getAllFiles();
