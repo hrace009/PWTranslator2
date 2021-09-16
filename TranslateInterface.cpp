@@ -121,6 +121,48 @@ vector<wstring> TranslateInterface::getAllFilesSTF()
     return filesSTF;
 }
 
+void TranslateInterface::toNormalRussiaSTF()
+{
+    vector<wstring> temp;
+    for (int i = 0; i < russianLinesSTF.size(); i++)
+    {
+        wstring currentLine = russianLinesSTF[i];
+        wstring newLine;
+        for (int j = 0; j < currentLine.size(); j++)
+        {
+            newLine += currentLine[j];
+            if (currentLine[j] == '\r')
+            {
+                temp.push_back(newLine);
+                newLine.clear();
+            }
+        }
+    }
+
+    russianLinesSTF = temp;
+}
+
+void TranslateInterface::toNormalChineSTF()
+{
+    vector<wstring> temp;
+    for (int i = 0; i < chinesLinesSTF.size(); i++)
+    {
+        wstring currentLine = chinesLinesSTF[i];
+        wstring newLine;
+        for (int j = 0; j < currentLine.size(); j++)
+        {
+            newLine += currentLine[j];
+            if (currentLine[j] == '\r')
+            {
+                temp.push_back(newLine);
+                newLine.clear();
+            }
+        }
+    }
+
+    chinesLinesSTF = temp;
+}
+
 int TranslateInterface::openBracket(wstring line)
 {
     for (int i = 0; i < 8; i++)
@@ -357,31 +399,6 @@ void TranslateInterface::toOutput()
     }
 }
 
-bool TranslateInterface::isQuote(int index, wstring currentLine)
-{
-    wstring cur = currentLine.substr(index, 1);
-    wstring quote = L"\"";
-
-    return cur == quote;
-}
-
-bool TranslateInterface::isNotNumber(int index, wstring currentLine)
-{
-    wstring cur = currentLine.substr(index, 1);
-    return cur == L"0" || cur == L"1" ||
-        cur == L"2" || cur == L"3" ||
-        cur == L"4" || cur == L"5" ||
-        cur == L"6" || cur == L"7" ||
-        cur == L"8" || cur == L"9";
-}
-
-bool TranslateInterface::isNewLine(int index, wstring currentLine)
-{
-    wstring cur = currentLine.substr(index, 1);
-    wstring newLine = L"\r";
-    return cur == newLine;
-}
-
 bool TranslateInterface::isComment(int index, wstring currentLine)
 {
     wstring cur = currentLine.substr(index, 2);
@@ -389,19 +406,19 @@ bool TranslateInterface::isComment(int index, wstring currentLine)
     return cur == newLine;
 }
 
-wstring TranslateInterface::toNormalID(wstring id)
+bool isNumber(wchar_t c)
 {
-    wstring newID;
-    for (int i = 0; i < id.size(); i++)
-    {
-        if (!isNotNumber(i, id))
-        {
-            return newID;
-        }
-        newID += id[i];
-    }
+    return c >= 48 && c <= 57;
+}
 
-    return newID;
+bool isSpace(wchar_t c)
+{
+    return c == '\t' || c == ' ';
+}
+
+bool startLineID(int index, wchar_t c)
+{
+    return index <= 1 && isNumber(c);
 }
 
 void TranslateInterface::initRussianDataSTF()
@@ -409,20 +426,25 @@ void TranslateInterface::initRussianDataSTF()
     for (int i = 0; i < russianLinesSTF.size(); i++)
     {
         wstring currentLine = russianLinesSTF[i];
+        wstring currentData;
         wstring id;
+        wstring space;
         for (int j = 0; j < currentLine.size(); j++)
         {
-            if (isComment(j, currentLine))
+            if (isNumber(currentLine[j]))
             {
-                break;
+                id += currentLine[j];
             }
-            if (isQuote(j, currentLine))
+            else if (isSpace(currentLine[j]))
             {
-                id = toNormalID(id);
-                wstring currentString;
-                currentString += currentLine[j++];
-                while (!isQuote(j, currentLine))
+                space += currentLine[j];
+            }
+            else if (id.size() > 0)
+            {
+                while (!startLineID(j, currentLine[j]))
                 {
+                    currentData += currentLine[j];
+                    j++;
                     if (j == currentLine.size())
                     {
                         j = 0;
@@ -436,17 +458,10 @@ void TranslateInterface::initRussianDataSTF()
                             return;
                         }
                     }
-                    else
-                    {
-                        currentString += currentLine[j++];
-                    }
                 }
-                currentString += currentLine[j++];
-                russianDatasSTF[id] = currentString;
-            }
-            else
-            {
-                id += currentLine[j];
+                russianDatasSTF[id] = currentData;
+                i--;
+                break;
             }
         }
     }
@@ -457,21 +472,25 @@ void TranslateInterface::initChineDataSTF()
     for (int i = 0; i < chinesLinesSTF.size(); i++)
     {
         wstring currentLine = chinesLinesSTF[i];
+        wstring currentData;
         wstring id;
         wstring space;
         for (int j = 0; j < currentLine.size(); j++)
         {
-            if (isComment(j, currentLine))
+            if (isNumber(currentLine[j]))
             {
-                break;
+                id += currentLine[j];
             }
-            if (isQuote(j, currentLine))
+            else if (isSpace(currentLine[j]))
             {
-                id = toNormalID(id);
-                wstring currentString;
-                currentString += currentLine[j++];
-                while (!isQuote(j, currentLine))
+                space += currentLine[j];
+            }
+            else if (id.size() > 0)
+            {
+                while (!startLineID(j, currentLine[j]))
                 {
+                    currentData += currentLine[j];
+                    j++;
                     if (j == currentLine.size())
                     {
                         j = 0;
@@ -482,28 +501,16 @@ void TranslateInterface::initChineDataSTF()
                         }
                         else
                         {
+                            chineDatasSTF[id].str = currentData;
+                            chineDatasSTF[id].space = space;
                             return;
                         }
                     }
-                    else
-                    {
-                        currentString += currentLine[j++];
-                    }
                 }
-                currentString += currentLine[j++];
-                if (chineDatasSTF.find(id) == chineDatasSTF.end())
-                {
-                    chineDatasSTF[id].str = currentString;
-                    chineDatasSTF[id].space = space;
-                }
-            }
-            else
-            {
-                if (currentLine[j] == '\t' || currentLine[j] == ' ')
-                {
-                    space = currentLine[j];
-                }
-                id += currentLine[j];
+                chineDatasSTF[id].str = currentData;
+                chineDatasSTF[id].space = space;
+                i--;
+                break;
             }
         }
     }
@@ -575,7 +582,7 @@ void TranslateInterface::toOutputSTF()
 
     for (int i = 0; i < toOut.size(); i++)
     {
-        outputLinesSTF.push_back(to_wstring(toOut[i].first) + toOut[i].second.second + toOut[i].second.first + L"\r");
+        outputLinesSTF.push_back(to_wstring(toOut[i].first) + toOut[i].second.second + toOut[i].second.first);
     }
 }
 
@@ -602,6 +609,8 @@ void TranslateInterface::translateFileSTF(wstring fileName)
     }
     file.close();
 
+    toNormalRussiaSTF();
+    toNormalChineSTF();
     initRussianDataSTF();
     initChineDataSTF();
     toOutputSTF();

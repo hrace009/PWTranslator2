@@ -69,11 +69,9 @@ public:
     vector<wstring> getAllFiles();
     vector<wstring> getAllFilesSTF();
 
-    bool isQuote(int index, wstring currentLine);
-    bool isNotNumber(int index, wstring currentLine);
-    bool isNewLine(int index, wstring currentLine);
+    void toNormalRussiaSTF();
+    void toNormalChineSTF();
     bool isComment(int index, wstring currentLine);
-    wstring toNormalID(wstring id);
     void initRussianDataSTF();
     void initChineDataSTF();
     void toOutputSTF();
