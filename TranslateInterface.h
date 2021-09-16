@@ -57,12 +57,11 @@ public:
     TranslateInterface(System::String^ firstPath, System::String^ secondPath, System::String^ outputPath);
     virtual ~TranslateInterface();
   
-    bool isName(int index, wstring line);
-    int isOpenBracket(int index, wstring line);
-    bool isCloseBracket(int index, wstring line, int numberOpen);
-    int findCloseQuote(int index, wstring line);
-    bool endLine(int start, int numLine, int index, wstring line);
+    int openBracket(wstring line);
+    bool closeBracket(wstring line, int numberOpen);
+    bool endLine(int start, int numLine, wstring line);
     void initRussianDataXML();
+    void toNormalRussia();
     void toNormalChine();
     void initChinesDataXML();
     void toOutput();
