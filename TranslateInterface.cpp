@@ -131,11 +131,24 @@ void TranslateInterface::toNormalRussiaSTF()
         for (int j = 0; j < currentLine.size(); j++)
         {
             newLine += currentLine[j];
-            if (currentLine[j] == '\r')
+            if (currentLine[j] == '\r' && newLine.size() > 0 && newLine != L"\r" && newLine != L"\t\r")
             {
+                if (currentLine[j] != '\r')
+                {
+                    newLine += L'\r';
+                }
                 temp.push_back(newLine);
                 newLine.clear();
             }
+        }
+        if (newLine.size() > 0 && newLine != L"\r" && newLine != L"\t\r")
+        {
+            if (newLine[newLine.size() - 1] != '\r')
+            {
+                newLine += L'\r';
+            }
+            temp.push_back(newLine);
+            newLine.clear();
         }
     }
 
@@ -152,11 +165,24 @@ void TranslateInterface::toNormalChineSTF()
         for (int j = 0; j < currentLine.size(); j++)
         {
             newLine += currentLine[j];
-            if (currentLine[j] == '\r')
+            if (currentLine[j] == '\r' && newLine.size() > 0 && newLine != L"\r" && newLine != L"\t\r")
             {
+                if (currentLine[j] != '\r')
+                {
+                    newLine += L'\r';
+                }
                 temp.push_back(newLine);
                 newLine.clear();
             }
+        }
+        if (newLine.size() > 0 && newLine != L"\r" && newLine != L"\t\r")
+        {
+            if (newLine[newLine.size() - 1] != '\r')
+            {
+                newLine += L'\r';
+            }
+            temp.push_back(newLine);
+            newLine.clear();
         }
     }
 
@@ -259,11 +285,24 @@ void TranslateInterface::toNormalRussia()
         for (int j = 0; j < currentLine.size(); j++)
         {
             newLine += currentLine[j];
-            if (currentLine[j] == '\r')
+            if (currentLine[j] == '\r' && newLine.size() > 0 && newLine != L"\r" && newLine != L"\t\r")
             {
+                if (currentLine[j] != '\r')
+                {
+                    newLine += L'\r';
+                }
                 temp.push_back(newLine);
                 newLine.clear();
             }
+        }
+        if (newLine.size() > 0 && newLine != L"\r" && newLine != L"\t\r")
+        {
+            if (newLine[newLine.size() - 1] != '\r')
+            {
+                newLine += L'\r';
+            }
+            temp.push_back(newLine);
+            newLine.clear();
         }
     }
 
@@ -280,11 +319,24 @@ void TranslateInterface::toNormalChine()
         for (int j = 0; j < currentLine.size(); j++)
         {
             newLine += currentLine[j];
-            if (currentLine[j] == '\r')
+            if (currentLine[j] == '\r' && newLine.size() > 0 && newLine != L"\r" && newLine != L"\t\r")
             {
+                if (currentLine[j] != '\r')
+                {
+                    newLine += L'\r';
+                }
                 temp.push_back(newLine);
                 newLine.clear();
             }
+        }
+        if (newLine.size() > 0 && newLine != L"\r" && newLine != L"\t\r")
+        {
+            if (newLine[newLine.size() - 1] != '\r')
+            {
+                newLine += L'\r';
+            }
+            temp.push_back(newLine);
+            newLine.clear();
         }
     }
 
@@ -340,6 +392,21 @@ void TranslateInterface::initChinesDataXML()
     }
 }
 
+bool check(wstring line)
+{
+    for (int i = 0; i < 8; i++)
+    {
+        wstring currentOpenBracket = OPENBRACKET[i];
+        int posOpenBracket = line.find(currentOpenBracket, currentOpenBracket.size());
+        if (posOpenBracket != string::npos)
+        {
+            return false;
+        }
+    }
+
+    return true;
+}
+
 void TranslateInterface::toOutput()
 {
     wstring dataLine;
@@ -368,7 +435,7 @@ void TranslateInterface::toOutput()
                     currentName = currentLine.substr(posOpenQuote + 1, posCloseQuote - posOpenQuote - 1);
                     if (russianDataXML.find(currentName) != russianDataXML.end())
                     {
-                        if (russianDataXML[currentName].second == chinesDataXML[currentName])
+                        if (check(russianDataXML[currentName].first))
                         {
                             dataLine = russianDataXML[currentName].first;
                             flag = true;
@@ -609,20 +676,28 @@ void TranslateInterface::translateFileSTF(wstring fileName)
     }
     file.close();
 
-    toNormalRussiaSTF();
-    toNormalChineSTF();
-    initRussianDataSTF();
+   /* toNormalRussiaSTF();
+    toNormalChineSTF();*/
+    /*initRussianDataSTF();
     initChineDataSTF();
-    toOutputSTF();
+    toOutputSTF();*/
 
     ofstream fout(out + L"\\" + fileName, ios::out | ios::binary);
     fout.imbue(locale(file.getloc(), new codecvt_utf16<wchar_t, 0x10ffff, consume_header>));
 
     wstring_convert<codecvt_utf16<
         wchar_t, 0x10ffff, codecvt_mode(generate_header | little_endian)>> conv;
-    for (const auto currentLine : outputLinesSTF)
+    for (const auto currentLine : russianLinesSTF)
     {
         fout << conv.to_bytes(currentLine);
     }
+    /*for (int i = russianLinesSTF.size(); i < chinesLinesSTF.size(); i++)
+    {
+        fout << conv.to_bytes(chinesLinesSTF[i]);
+    }*/
+    /*for (const auto currentLine : outputLinesSTF)
+    {
+        fout << conv.to_bytes(currentLine);
+    }*/
     fout.close();
 }
