@@ -8,14 +8,15 @@
 #include <iomanip>
 #include <codecvt>
 #include <unordered_map>
+#include <unordered_set>
 #include <windows.h>
 #include <msclr/marshal_cppstd.h>
 #include <algorithm>
 
 using namespace std;
 
-const wstring OPENBRACKET[] = { L"<IMAGEPICTURE", L"<EDIT", L"<LABEL", L"<STILLIMAGEBUTTON", L"<LIST", L"<RADIO", L"<CHECK", L"<TEXT" };
-const wstring CLOSEBRACKET[] = { L"</IMAGEPICTURE>", L"</EDIT>", L"</LABEL>", L"</STILLIMAGEBUTTON>", L"</LIST>", L"</RADIO>", L"</CHECK>" , L"</TEXT>" };
+const wstring OPENBRACKET[] = { L"<IMAGEPICTURE", L"<EDIT", L"<LABEL", L"<STILLIMAGEBUTTON", L"<LIST", L"<RADIO", L"<CHECK", L"<TEXT", L"<COMBO", L"<CTRLFOLDER", L"<SUBDIALOG", L"<PROGRESS", L"<SCROLL", L"<TREE", L"<WINDOWPICTURE", L"<SLIDER"};
+const wstring CLOSEBRACKET[] = { L"</IMAGEPICTURE>", L"</EDIT>", L"</LABEL>", L"</STILLIMAGEBUTTON>", L"</LIST>", L"</RADIO>", L"</CHECK>" , L"</TEXT>", L"</COMBO>", L"</CTRLFOLDER>", L"</SUBDIALOG>", L"</PROGRESS>", L"</SCROLL>", L"</TREE>", L"</WINDOWPICTURE>", L"</SLIDER>"};
 
 class TranslateInterface
 {
@@ -31,8 +32,8 @@ private:
     vector<wstring> russianLinesXML;
     vector<wstring> outputLinesXML;
     wstring firstRussianLine;
-    unordered_map<wstring, pair<wstring, int>> russianDataXML;
-    unordered_map<wstring, int> chinesDataXML;
+    unordered_map<wstring, wstring> russianDataXML;
+    unordered_set<wstring> chinesDataXML;
 
     vector<wstring> chinesLinesSTF;
     vector<wstring> russianLinesSTF;
@@ -63,7 +64,6 @@ public:
     void initRussianDataXML();
     void toNormalRussia();
     void toNormalChine();
-    void initChinesDataXML();
     void toOutput();
     void translateFile(wstring fileName);
     vector<wstring> getAllFiles();

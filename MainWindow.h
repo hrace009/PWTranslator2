@@ -392,7 +392,7 @@ namespace PWTranslator {
 			this->progressBar1->Increment(1);
 		}
 		progress = L"Translated XML files. Progress: " + to_wstring(files.size()) + L"/" + to_wstring(files.size()) + L"  Completed!";
-		this->label7->Text = gcnew String(progress.c_str()); 
+		/*this->label7->Text = gcnew String(progress.c_str()); 
 		this->progressBar1->Increment(1);
 
 		this->progressBar1->Value = 0;
@@ -410,7 +410,7 @@ namespace PWTranslator {
 		}
 		progress = L"Translated STF files. Progress: " + to_wstring(files.size()) + L"/" + to_wstring(files.size()) + L"  Completed!";
 		this->label7->Text = gcnew String(progress.c_str());
-		this->progressBar1->Increment(1);
+		this->progressBar1->Increment(1);*/
 	}
 	};
 }
