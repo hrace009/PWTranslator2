@@ -13,7 +13,7 @@ namespace PWTranslator {
 	using namespace System::Drawing;
 
 	/// <summary>
-	/// Сводка для MyForm
+	/// Сvodka for MyForm
 	/// </summary>
 	public ref class MainWindow : public System::Windows::Forms::Form
 	{
@@ -22,13 +22,13 @@ namespace PWTranslator {
 		{
 			InitializeComponent();
 			//
-			//TODO: добавьте код конструктора
+			//TODO: add constructor code
 			//
 		}
 
 	protected:
 		/// <summary>
-		/// Освободить все используемые ресурсы.
+		/// Release all used resources.
 		/// </summary>
 		~MainWindow()
 		{
@@ -66,14 +66,14 @@ namespace PWTranslator {
 
 	private:
 		/// <summary>
-		/// Обязательная переменная конструктора.
+		/// Required constructor variable.
 		/// </summary>
 		System::ComponentModel::Container^ components;
 
 #pragma region Windows Form Designer generated code
 		/// <summary>
-		/// Требуемый метод для поддержки конструктора — не изменяйте 
-		/// содержимое этого метода с помощью редактора кода.
+		/// "required method for constructor support I will not change
+		/// the contents of this method using a code editor.
 		/// </summary>
 		void InitializeComponent(void)
 		{
@@ -104,17 +104,17 @@ namespace PWTranslator {
 			// 
 			// button1
 			// 
-			this->button1->Location = System::Drawing::Point(759, 8);
+			this->button1->Location = System::Drawing::Point(853, 8);
 			this->button1->Name = L"button1";
 			this->button1->Size = System::Drawing::Size(78, 20);
 			this->button1->TabIndex = 0;
-			this->button1->Text = L"Обзор...";
+			this->button1->Text = L"Review...";
 			this->button1->UseVisualStyleBackColor = true;
 			this->button1->Click += gcnew System::EventHandler(this, &MainWindow::button1_Click);
 			// 
 			// textBox1
 			// 
-			this->textBox1->Location = System::Drawing::Point(350, 8);
+			this->textBox1->Location = System::Drawing::Point(444, 8);
 			this->textBox1->Name = L"textBox1";
 			this->textBox1->Size = System::Drawing::Size(403, 20);
 			this->textBox1->TabIndex = 1;
@@ -125,9 +125,9 @@ namespace PWTranslator {
 			this->label1->Font = (gcnew System::Drawing::Font(L"Arial", 10));
 			this->label1->Location = System::Drawing::Point(12, 9);
 			this->label1->Name = L"label1";
-			this->label1->Size = System::Drawing::Size(332, 16);
+			this->label1->Size = System::Drawing::Size(416, 16);
 			this->label1->TabIndex = 2;
-			this->label1->Text = L"Путь до папки interface, которую надо перевести";
+			this->label1->Text = L"The bottom line is the interface folder that needs to be translated";
 			// 
 			// label2
 			// 
@@ -135,40 +135,40 @@ namespace PWTranslator {
 			this->label2->Font = (gcnew System::Drawing::Font(L"Arial", 10));
 			this->label2->Location = System::Drawing::Point(12, 41);
 			this->label2->Name = L"label2";
-			this->label2->Size = System::Drawing::Size(314, 16);
+			this->label2->Size = System::Drawing::Size(407, 16);
 			this->label2->TabIndex = 3;
-			this->label2->Text = L"Путь до папки interface, откуда брать перевод";
+			this->label2->Text = L"The essence to the interface folder, where to get the translation";
 			// 
 			// textBox2
 			// 
-			this->textBox2->Location = System::Drawing::Point(350, 40);
+			this->textBox2->Location = System::Drawing::Point(444, 40);
 			this->textBox2->Name = L"textBox2";
 			this->textBox2->Size = System::Drawing::Size(403, 20);
 			this->textBox2->TabIndex = 4;
 			// 
 			// button2
 			// 
-			this->button2->Location = System::Drawing::Point(760, 41);
+			this->button2->Location = System::Drawing::Point(854, 41);
 			this->button2->Name = L"button2";
 			this->button2->Size = System::Drawing::Size(78, 20);
 			this->button2->TabIndex = 5;
-			this->button2->Text = L"Обзор...";
+			this->button2->Text = L"Review...";
 			this->button2->UseVisualStyleBackColor = true;
 			this->button2->Click += gcnew System::EventHandler(this, &MainWindow::button2_Click);
 			// 
 			// button3
 			// 
-			this->button3->Location = System::Drawing::Point(760, 106);
+			this->button3->Location = System::Drawing::Point(854, 106);
 			this->button3->Name = L"button3";
 			this->button3->Size = System::Drawing::Size(78, 20);
 			this->button3->TabIndex = 11;
-			this->button3->Text = L"Обзор...";
+			this->button3->Text = L"Review...";
 			this->button3->UseVisualStyleBackColor = true;
 			this->button3->Click += gcnew System::EventHandler(this, &MainWindow::button3_Click);
 			// 
 			// textBox3
 			// 
-			this->textBox3->Location = System::Drawing::Point(350, 105);
+			this->textBox3->Location = System::Drawing::Point(444, 105);
 			this->textBox3->Name = L"textBox3";
 			this->textBox3->Size = System::Drawing::Size(403, 20);
 			this->textBox3->TabIndex = 10;
@@ -179,9 +179,9 @@ namespace PWTranslator {
 			this->label3->Font = (gcnew System::Drawing::Font(L"Arial", 10));
 			this->label3->Location = System::Drawing::Point(12, 106);
 			this->label3->Name = L"label3";
-			this->label3->Size = System::Drawing::Size(297, 16);
+			this->label3->Size = System::Drawing::Size(420, 16);
 			this->label3->TabIndex = 9;
-			this->label3->Text = L"Путь до папки config, откуда брать перевод";
+			this->label3->Text = L"The bottom line is to the config folder, where to get the translation";
 			// 
 			// label4
 			// 
@@ -189,40 +189,40 @@ namespace PWTranslator {
 			this->label4->Font = (gcnew System::Drawing::Font(L"Arial", 10));
 			this->label4->Location = System::Drawing::Point(12, 74);
 			this->label4->Name = L"label4";
-			this->label4->Size = System::Drawing::Size(315, 16);
+			this->label4->Size = System::Drawing::Size(399, 16);
 			this->label4->TabIndex = 8;
-			this->label4->Text = L"Путь до папки config, которую надо перевести";
+			this->label4->Text = L"The bottom line is the config folder that needs to be translated";
 			// 
 			// textBox4
 			// 
-			this->textBox4->Location = System::Drawing::Point(350, 73);
+			this->textBox4->Location = System::Drawing::Point(444, 73);
 			this->textBox4->Name = L"textBox4";
 			this->textBox4->Size = System::Drawing::Size(403, 20);
 			this->textBox4->TabIndex = 7;
 			// 
 			// button4
 			// 
-			this->button4->Location = System::Drawing::Point(759, 73);
+			this->button4->Location = System::Drawing::Point(853, 73);
 			this->button4->Name = L"button4";
 			this->button4->Size = System::Drawing::Size(78, 20);
 			this->button4->TabIndex = 6;
-			this->button4->Text = L"Обзор...";
+			this->button4->Text = L"Review...";
 			this->button4->UseVisualStyleBackColor = true;
 			this->button4->Click += gcnew System::EventHandler(this, &MainWindow::button4_Click);
 			// 
 			// button5
 			// 
-			this->button5->Location = System::Drawing::Point(760, 135);
+			this->button5->Location = System::Drawing::Point(854, 135);
 			this->button5->Name = L"button5";
 			this->button5->Size = System::Drawing::Size(78, 20);
 			this->button5->TabIndex = 14;
-			this->button5->Text = L"Обзор...";
+			this->button5->Text = L"Review...";
 			this->button5->UseVisualStyleBackColor = true;
 			this->button5->Click += gcnew System::EventHandler(this, &MainWindow::button5_Click);
 			// 
 			// textBox5
 			// 
-			this->textBox5->Location = System::Drawing::Point(350, 134);
+			this->textBox5->Location = System::Drawing::Point(444, 134);
 			this->textBox5->Name = L"textBox5";
 			this->textBox5->Size = System::Drawing::Size(403, 20);
 			this->textBox5->TabIndex = 13;
@@ -233,23 +233,23 @@ namespace PWTranslator {
 			this->label5->Font = (gcnew System::Drawing::Font(L"Arial", 10));
 			this->label5->Location = System::Drawing::Point(12, 135);
 			this->label5->Name = L"label5";
-			this->label5->Size = System::Drawing::Size(215, 16);
+			this->label5->Size = System::Drawing::Size(140, 16);
 			this->label5->TabIndex = 12;
-			this->label5->Text = L"Папка для сохранения interface";
+			this->label5->Text = L"Interface save button";
 			// 
 			// button6
 			// 
-			this->button6->Location = System::Drawing::Point(760, 165);
+			this->button6->Location = System::Drawing::Point(854, 165);
 			this->button6->Name = L"button6";
 			this->button6->Size = System::Drawing::Size(78, 20);
 			this->button6->TabIndex = 17;
-			this->button6->Text = L"Обзор...";
+			this->button6->Text = L"Review...";
 			this->button6->UseVisualStyleBackColor = true;
 			this->button6->Click += gcnew System::EventHandler(this, &MainWindow::button6_Click);
 			// 
 			// textBox6
 			// 
-			this->textBox6->Location = System::Drawing::Point(350, 164);
+			this->textBox6->Location = System::Drawing::Point(444, 164);
 			this->textBox6->Name = L"textBox6";
 			this->textBox6->Size = System::Drawing::Size(403, 20);
 			this->textBox6->TabIndex = 16;
@@ -260,9 +260,9 @@ namespace PWTranslator {
 			this->label6->Font = (gcnew System::Drawing::Font(L"Arial", 10));
 			this->label6->Location = System::Drawing::Point(12, 165);
 			this->label6->Name = L"label6";
-			this->label6->Size = System::Drawing::Size(198, 16);
+			this->label6->Size = System::Drawing::Size(121, 16);
 			this->label6->TabIndex = 15;
-			this->label6->Text = L"Папка для сохранения config";
+			this->label6->Text = L"Save config folder";
 			// 
 			// button7
 			// 
@@ -270,24 +270,24 @@ namespace PWTranslator {
 			this->button7->Name = L"button7";
 			this->button7->Size = System::Drawing::Size(346, 33);
 			this->button7->TabIndex = 18;
-			this->button7->Text = L"Перевести interface";
+			this->button7->Text = L"Translate interface";
 			this->button7->UseVisualStyleBackColor = true;
 			this->button7->Click += gcnew System::EventHandler(this, &MainWindow::button7_Click);
 			// 
 			// button8
 			// 
-			this->button8->Location = System::Drawing::Point(491, 199);
+			this->button8->Location = System::Drawing::Point(585, 199);
 			this->button8->Name = L"button8";
 			this->button8->Size = System::Drawing::Size(346, 33);
 			this->button8->TabIndex = 19;
-			this->button8->Text = L"Перевести config";
+			this->button8->Text = L"Translate config";
 			this->button8->UseVisualStyleBackColor = true;
 			// 
 			// progressBar1
 			// 
 			this->progressBar1->Location = System::Drawing::Point(15, 276);
 			this->progressBar1->Name = L"progressBar1";
-			this->progressBar1->Size = System::Drawing::Size(823, 33);
+			this->progressBar1->Size = System::Drawing::Size(917, 33);
 			this->progressBar1->TabIndex = 20;
 			// 
 			// label7
@@ -304,7 +304,7 @@ namespace PWTranslator {
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
-			this->ClientSize = System::Drawing::Size(850, 321);
+			this->ClientSize = System::Drawing::Size(939, 321);
 			this->Controls->Add(this->label7);
 			this->Controls->Add(this->progressBar1);
 			this->Controls->Add(this->button8);
